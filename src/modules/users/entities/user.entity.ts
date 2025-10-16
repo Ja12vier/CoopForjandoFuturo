@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import  * as bcrypt from  "bcrypt";
 enum TypeUser {
     ADMIN = 'admin',
@@ -38,7 +38,8 @@ export class User {
 
     @Column()
     password:string;
-
+    
+    @BeforeUpdate()
     @BeforeInsert()
     async hashPassword() {
        const handlePassword= await bcrypt.hash(this.password,10);

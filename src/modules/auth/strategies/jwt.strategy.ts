@@ -6,8 +6,6 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { User } from "src/modules/users/entities/user.entity";
 import { Repository } from "typeorm";
 
-
-
 interface Payload{
     id:number;
 }

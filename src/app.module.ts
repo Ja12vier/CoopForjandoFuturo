@@ -6,7 +6,7 @@ import { join } from 'path';
 import { UsersModule } from './modules/users/users.module';
 import { LoansModule } from './modules/loans/loans.module';
 import { AuthModule } from './modules/auth/auth.module';
-
+import { UsersClientsModule } from './modules/users-clients/users-clients.module';
 
 @Module({
   imports: [
@@ -24,6 +24,7 @@ import { AuthModule } from './modules/auth/auth.module';
     UsersModule,
     LoansModule,
     AuthModule,
+    UsersClientsModule,
     
   ],
   controllers: [],

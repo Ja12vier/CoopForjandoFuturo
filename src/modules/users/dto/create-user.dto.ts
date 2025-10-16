@@ -1,5 +1,5 @@
-import { IsBoolean, IsEmail, IsEnum, isEnum, IsNotEmpty, IsString, Length, MinLength, minLength } from "class-validator";
-import { BeforeInsert } from "typeorm";
+import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString, Length, MinLength, minLength } from "class-validator";
+
 
 enum TypeUser {
     ADMIN = 'admin',

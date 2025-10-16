@@ -1,1 +1,6 @@
-export class CreateLoanDto {}
+
+
+export class CreateLoanDto {
+
+    
+}

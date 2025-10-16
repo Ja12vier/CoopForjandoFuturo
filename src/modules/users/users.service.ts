@@ -4,13 +4,16 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { not } from 'rxjs/internal/util/not';
+import { LoginUserDto } from './dto/login-user.dtos';
+import * as bcrypt from 'bcrypt'; 
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService
   ) {}  
 
   async create(createUserDto: CreateUserDto) {
@@ -51,4 +54,24 @@ export class UsersService {
     }
     return `This action removes a #${id} user`;
   }
+
+  async login(loginUserDto:LoginUserDto){
+    const {email, password}=loginUserDto;
+    const user=await this.userRepository.findOne({
+      where:{email},
+      select:['email', 'password']
+    });
+    if(!user){ 
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+    const validatePassword= await bcrypt.compare(password, user.password);
+    if(!validatePassword){
+      throw new NotFoundException(`Invalid credentials`);
+    }
+    const token= this.jwtService.sign({id:user.id});
+    return {user, token};
+    
+  }
+
 }
+
