@@ -1,7 +1,7 @@
 import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString, Length, MinLength, minLength } from "class-validator";
 
 
-enum TypeUser {
+enum UserRole {
     ADMIN = 'admin',
     USER = 'user'
 }
@@ -10,29 +10,29 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     @IsString()
-    name:string;
+    name!:string;
 
     @IsNotEmpty()
     @IsString()
-    lastName:string;
+    lastName!:string;
 
     @IsNotEmpty()
     @IsString()
     @Length(12,12)
-    phone:string;
+    phone!:string;
 
     @IsNotEmpty()
     @IsEmail()
     @IsString()
-    email:string;
+    email!:string;
 
     @IsNotEmpty()
     @IsString()
-    address:string;
+    address!:string;
 
-    @IsEnum(TypeUser)
+    @IsEnum(UserRole)
     @IsString() 
-    typeUser?:string=TypeUser.USER;
+    role?:string=UserRole.USER;
 
     @IsBoolean()
     state?:boolean=true;
@@ -40,6 +40,6 @@ export class CreateUserDto {
     @IsNotEmpty()
     @IsString()
     @MinLength(6)
-    password:string;
+    password!:string;
 }
 

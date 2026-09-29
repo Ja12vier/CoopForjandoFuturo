@@ -17,7 +17,9 @@ interface Payload{
         private readonly userRepository:Repository<User>,
          configService:ConfigService
      ){
-      const tokenSecret = configService.get<string>('TOKEN_SECRET');
+      const tokenSecret = configService.get<string>('TOKEN_SECRET');    
+      console.log("mi token", tokenSecret);
+      
        if (!tokenSecret) {
         throw new Error('TOKEN_SECRET is not defined in environment variables');
        }
@@ -29,8 +31,10 @@ interface Payload{
 
      async validate(payload:Payload):Promise<User>{
         const {id}=payload;
+        console.log(payload);
+        
         const user= await this.userRepository.findOneBy({id});
         if(!user) throw new UnauthorizedException('Not authorized');
-        return user
+        return user;
      }
   }

@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/login-user.dtos';
 import * as bcrypt from 'bcrypt'; 
 import { JwtService } from '@nestjs/jwt';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -17,15 +18,23 @@ export class UsersService {
   ) {}  
 
   async create(createUserDto: CreateUserDto) {
+    const {email, phone}=createUserDto;
+    const exitingUser= await this.userRepository.findOne({where:{email}});
+    if(exitingUser){
+      throw new NotFoundException(`User with email ${email} already exists`);
+    }
+    const exitingPhone= await this.userRepository.findOne({where:{phone}});
+    if(exitingPhone){
+      throw new NotFoundException(`User with phone ${phone} already exists`);
+    }
     const newUser=this.userRepository.create(createUserDto);
     await this.userRepository.save(newUser);
-    return newUser;
+    return plainToInstance(User, newUser, {excludeExtraneousValues:true});
   }
 
   async findAll() {
     const users= await this.userRepository.find();
-    return users;
-    //`This action returns all users`;
+    return plainToInstance(User, users, {excludeExtraneousValues:true});
   }
 
   async findOne(id: number) {
@@ -33,7 +42,7 @@ export class UsersService {
     if(!user){
       throw new NotFoundException(`User with id ${id} not found`);
     }
-    return user;
+    return plainToInstance(User, user,{excludeExtraneousValues:true});
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -44,7 +53,7 @@ export class UsersService {
       throw new NotFoundException(`User with id ${id} not found`);
      }
     await this.userRepository.save(user);
-    return user;
+    return plainToInstance(User, user,{excludeExtraneousValues:true});
   }
 
   async remove(id: number) {
@@ -57,19 +66,20 @@ export class UsersService {
 
   async login(loginUserDto:LoginUserDto){
     const {email, password}=loginUserDto;
-    const user=await this.userRepository.findOne({
-      where:{email},
-      select:['email', 'password']
+    
+    const existUser=await this.userRepository.findOne({
+      where:{email}
     });
-    if(!user){ 
+    if(!existUser){ 
       throw new NotFoundException(`User with email ${email} not found`);
     }
-    const validatePassword= await bcrypt.compare(password, user.password);
+    const validatePassword= await bcrypt.compare(password, existUser.password);
     if(!validatePassword){
       throw new NotFoundException(`Invalid credentials`);
     }
-    const token= this.jwtService.sign({id:user.id});
-    return {user, token};
+    const payload={id:existUser.id};
+    const token= this.jwtService.sign(payload);
+    return {existUser, token};
     
   }
 

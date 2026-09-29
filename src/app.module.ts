@@ -7,6 +7,10 @@ import { UsersModule } from './modules/users/users.module';
 import { LoansModule } from './modules/loans/loans.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersClientsModule } from './modules/users-clients/users-clients.module';
+import { SavingsWithdrawalsModule } from './modules/savings-withdrawals/savings-withdrawals.module';
+import { LoanQuotasModule } from './modules/loan-quotas/loan-quotas.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -21,13 +25,19 @@ import { UsersClientsModule } from './modules/users-clients/users-clients.module
       rootPath:join(__dirname, '..','public'),
       renderPath:'/'
     }),
+    
+      ScheduleModule.forRoot(),
     UsersModule,
     LoansModule,
     AuthModule,
     UsersClientsModule,
+    SavingsWithdrawalsModule,
+    LoanQuotasModule,
+    PaymentsModule
     
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {}
+11

@@ -1,6 +1,9 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import  * as bcrypt from  "bcrypt";
-enum TypeUser {
+import { Exclude, Expose } from "class-transformer";
+import { UsersClient } from "src/modules/users-clients/entities/users-client.entity";
+import { Payment } from "src/modules/payments/entities/payment.entity";
+enum UserRole {
     ADMIN = 'admin',
     USER = 'user'
 }
@@ -8,40 +11,59 @@ enum TypeUser {
 @Entity()
 
 export class User {
-
+    @Expose()
     @PrimaryGeneratedColumn()
-    id:number;
-
-    @Column()
-    name:string;
-
-    @Column()
-    lastName:string;
-
-    @Column({unique:true})
-    phone:string;
-
-    @Column({unique:true})
-    email:string;
-
-    @Column()
-    address:string;
-
-    @Column({
-        type:'enum',
-        enum:TypeUser,
-        default:'user'})
-    typeUser?:string;
+    id!:number;
     
+    @Expose()
+    @Column()
+    name!:string;
+    
+    @Expose()
+    @Column()
+    lastName!:string;
+    
+    @Expose()
+    @Column({unique:true})
+    phone!:string;
+
+    @Expose()
+    @Column({unique:true})
+    email!:string;
+    
+    @Expose()
+    @Column()
+    address!:string;
+    
+    @Expose()
+    @Column({
+    type:'enum',
+    enum: UserRole,
+    default:'user'})
+    role?:string;
+    
+    @Expose()
     @Column({default:true})
     state?:boolean;
-
+   
+    @Exclude()
     @Column()
-    password:string;
+    password!:string;
     
     @BeforeUpdate()
     @BeforeInsert()
     async hashPassword() {
-       const handlePassword= await bcrypt.hash(this.password,10);
+       this.password = await bcrypt.hash(this.password,10);
     }
+
+    @OneToMany(() => UsersClient, (usersClient) => usersClient.user, { cascade: ['insert','update']})
+    usersClient!: UsersClient[];
+
+    @OneToMany(() => UsersClient, (usersClient) => usersClient.user, { cascade: ['insert','update']})
+    usersClients!: UsersClient[];
+    
+    @OneToMany(() =>Payment, (payment) => payment.user, { cascade: ['insert','update']})
+    payments!: Payment[];
 }
+
+
