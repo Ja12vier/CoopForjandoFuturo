@@ -12,7 +12,7 @@ export class LoanInterestFixedScheduler{
       private readonly loanInterestFixedService : LoanInterestFixedService
     ){}
 
-    @Cron('* * * * *', {timeZone: 'America/Santo_Domingo'})
+    @Cron('0 0 * * *', {timeZone: 'America/Santo_Domingo'})
     async applyInterestFixedCron() {
         try {
           await this.loanInterestFixedService.calculateInterestForAllFixedInstallmentsLoans();
